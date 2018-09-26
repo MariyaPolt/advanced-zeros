@@ -1,5 +1,5 @@
 module.exports = function getZerosCount(number, base) {
-  let arr = decomposeIntoPrimeFactors(base); //array of arrays, each consist of the prime factor and its degree
+  let arr = decomposeIntoPrimeFactors(base); //array of arrays, each consists of the prime factor and its degree
   let len = arr.length;
 
   for (let i = 0; i < len; i++) {
