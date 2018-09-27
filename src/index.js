@@ -1,40 +1,38 @@
 module.exports = function getZerosCount(number, base) {
-  let arr = decomposeIntoPrimeFactors(base); //array of arrays, each consists of the prime factor and its degree
-  let len = arr.length;
+  const factors = factorize(base);
+  let zerosCount = 0;
 
-  for (let i = 0; i < len; i++) {
-    arr[i].push( countMeetings(number, arr[i][0]) );
-  }
+  factors.forEach( factor => {
+      let factorResult = 0;
+      let primeBase = factor.factor;
+      let devisor = primeBase;
 
-  let min = Math.floor( arr[0][2] / arr[0][1] );
-  for (let i = 1; i < len; i++) {
-    if ( Math.floor( arr[i][2] / arr[i][1] ) < min ) {
-      min = Math.floor( arr[i][2] / arr[i][1] );
+      while ( Math.floor(number / devisor) >= 1 ) {
+        factorResult += Math.floor(number / devisor);
+        devisor *= primeBase;
+      }
+
+      factorResult /= factor.power;
+
+      if (!zerosCount || factorResult < zerosCount) {
+        zerosCount = factorResult;
+      }
     }
-  }
+  );
 
-  return min;
+  return Math.floor(zerosCount);
 }
 
-function decomposeIntoPrimeFactors(number) {
-  let n = number;
+function factorize(number) {
   let arr = [];
-  for (let i = 2, maxPower = 0; i <= n; i++, maxPower = 0) {
-    while (n % i === 0) {
-      n /= i;
-      maxPower++;
+  for (let factor = 2, power = 0; factor <= number; factor++, power = 0) {
+    while (number % factor === 0) {
+      number /= factor;
+      power++;
     }
-    arr.push([i, maxPower]);
+    if (power) {
+      arr.push( { factor, power } );
+    }
   }
   return arr;
-}
-
-function countMeetings(number, multiplier) {
-  let meetingsCount = 0;
-  for (let n = multiplier; n <= number; n *= multiplier) {
-    for (let i = n; i <= number; i += n) {
-      meetingsCount++;
-    }
-  }
-  return meetingsCount;
 }
